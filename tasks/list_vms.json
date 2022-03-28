@@ -1,5 +1,5 @@
 {
-  "description": "This task has a sensitive property denoted by its metadata",
+  "description": "List VMs in a VCenter",
   "input_method": "stdin",
   "parameters": {
     "server": {
@@ -16,7 +16,7 @@
       "sensitive": true
     },
     "vm_name": {
-      "description": "The VM name",
+      "description": "The VM name - asterisks allowed as wildcards",
       "type": "Optional[String[1]]",
       "default": "*"
     }

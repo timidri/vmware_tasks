@@ -1,0 +1,4 @@
+{
+  "description": "Testing reading from stdin with pwsh",
+  "input_method": "stdin"
+}

@@ -1,4 +1,4 @@
 {
-  "description": "This task has a sensitive property denoted by its metadata",
+  "description": "Simplest test task in pwsh",
   "input_method": "stdin"
 }
