@@ -2,13 +2,18 @@
   "description": "This task has a sensitive property denoted by its metadata",
   "input_method": "powershell",
   "parameters": {
+    "server": {
+      "description": "The Vcenter server",
+      "type": "String[1]"
+    },
     "username": {
-      "description": "The user",
+      "description": "The Vcenter user",
       "type": "String[1]"
     },
     "password": {
-      "description": "The password",
-      "type": "String[1]"
+      "description": "The Vcenter password",
+      "type": "String[1]",
+      "sensitive": true
     }
   }
 }

@@ -1,11 +1,11 @@
 #!/usr/bin/env pwsh
 [CmdletBinding()]
 Param (
+    [Parameter(Mandatory = $True)] [String] $server,
     [Parameter(Mandatory = $True)] [String] $username,
-    [Parameter(Mandatory = $True)] [SecureString] $password
+    [Parameter(Mandatory = $True)] [String] $password
 )
 
 write-host hello
-Connect-VIServer -Server vcenter-ci1.ops.puppetlabs.net -Protocol https -User $username -Password $password
-#Connect-VIServer -Server vcenter-ci1.ops.puppetlabs.net -Protocol https -Credential $credential
+Connect-VIServer -Server $server -Protocol https -User $username -Password $password
 Get-VM | format-table
