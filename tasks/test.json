@@ -1,0 +1,4 @@
+{
+  "description": "This task has a sensitive property denoted by its metadata",
+  "input_method": "stdin"
+}
