@@ -1,4 +1,4 @@
-# !/usr/bin/env pwsh
+#!/usr/bin/env pwsh
 [CmdletBinding()]
 Param (
     [Parameter(Mandatory = $True)] [String] $username,
