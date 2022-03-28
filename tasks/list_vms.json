@@ -1,6 +1,6 @@
 {
   "description": "This task has a sensitive property denoted by its metadata",
-  "input_method": "powershell",
+  "input_method": "stdin",
   "parameters": {
     "server": {
       "description": "The Vcenter server",

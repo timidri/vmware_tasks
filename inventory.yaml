@@ -20,8 +20,9 @@
 #       transport: winrm
 # config:
 #   ssh:
+#     login-shell: powershell
 #     host-key-check: false
-#   winrm:
-#     user: Administrator
-#     password: Bolt!
-#     ssl: false
+  # winrm:
+  #   user: Administrator
+  #   password: Bolt!
+  #   ssl: false
