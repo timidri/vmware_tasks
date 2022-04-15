@@ -1,3 +1,6 @@
 ---
 name: vmware_tasks
-modules: []
+modules: 
+  - git: https://github.com/timidri/puppetlabs-lvm
+    ref: fix-logical-volumes-fact
+  

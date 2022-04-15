@@ -1,0 +1,23 @@
+{
+  "description": "Set disk.EnableUUID setting to TRUE",
+  "input_method": "stdin",
+  "parameters": {
+    "server": {
+      "description": "The Vcenter server",
+      "type": "String[1]"
+    },
+    "username": {
+      "description": "The Vcenter user",
+      "type": "String[1]"
+    },
+    "password": {
+      "description": "The Vcenter password",
+      "type": "String[1]",
+      "sensitive": true
+    },
+    "vm_name": {
+      "description": "The VM name",
+      "type": "String[1]"
+    }
+  }
+}

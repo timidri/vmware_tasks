@@ -1,2 +1,6 @@
 .rerun.json
 bolt-debug.log
+.modules
+.resource_types
+.plan_cache.json
+.task_cache.json

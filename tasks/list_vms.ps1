@@ -7,12 +7,13 @@ foreach ($h in $json.GetEnumerator() ) {
     New-Variable -Name $h.Name -Value $h.Value
 }
 
-Connect-VIServer -Server $server -Protocol https -User $username -Password $password | Out-Null
-# print error, if any
-if ($Error -ne $null) {
-    Write-Host $Error
-    Exit 1
+try {
+    # connect to VCenter
+    Connect-VIServer -Server $server -Protocol https -User $username -Password $password | Out-Null
+    # get list of VMs
+    Get-VM -Name $vm_name | format-table
 }
-
-# get list of VMs
-Get-VM -Name $vm_name | format-table
+catch {
+    Write-Output "Error listing VMs:"
+    Write-Output $_
+  }
