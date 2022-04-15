@@ -21,7 +21,7 @@
     },
     "size": {
       "description": "The size of the disk in GB",
-      "type": "String[1]"
+      "type": "Variant[Integer,String[1]]"
     }
   }
 }
