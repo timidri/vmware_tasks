@@ -25,17 +25,16 @@ function ConvertTo-SnakeCase {
 try {
   # Connect to VCenter
   Connect-VIServer -Server $server -Protocol https -User $username -Password $password | Out-Null
-  # Create the new disk
-  $vm = Get-VM $vm_name
-  $harddisk = New-HardDisk -VM $vm -CapacityGB $size -StorageFormat Thin
-  # Convert output to json
-  $json = $harddisk | Select-Object name, capacitygb, @{N = 'vm_name'; E = { $_.parent.name } }, @{N = 'UUID'; E = { $_.ExtensionData.Backing.Uuid } } | ConvertTo-Json
+  # Get VM information, convert to json. Include IpAddress and HostName guest properties
+  $json = Get-Vm -Name $vm_name |
+  Select-Object PowerState, Name, NumCpu, MemoryMB, @{N = "IpAddress"; E = { @($_.guest.IPAddress[0]) } }, @{N = "HostName"; E = { @($_.guest.hostname) } }  | 
+  convertto-json -depth 10
   # Convert json keys to snake_case
   $json_snake_case = [regex]::Replace( $json, '(?<=")(\w+)(?=":)', { ConvertTo-SnakeCase($args[0].Groups[1].Value) } )
   Write-Output $json_snake_case
 }
 catch {
-  Write-Output "Error adding a disk:"
+  Write-Output "Error getting VM information:"
   Write-Output $PSItem
   Exit 1
 }

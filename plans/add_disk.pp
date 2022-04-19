@@ -1,41 +1,77 @@
 plan vmware_tasks::add_disk (
+  String[1] $vcenter_host,
+  String[1] $username,
+  Sensitive $password,
   String[1] $vm_name,
-  String[1] $size,
+  String[1] $size_gb,
+  String[1] $logical_volume = 'root',
+  String[1] $volume_group = 'cl',
+  Boolean $resize_fs = true,
   TargetSpec $target,
-  TargetSpec $vmware_jumphost='primary.relay.vm',
   Optional[Float[0,1]] $avail_percentage = 0.99,
+  Boolean $dry_run = true,
 ) {
 
-  run_task('vmware_tasks::add_disk', vm_name => $vn_name, size => $size)
+  $vcenter_params = { server => $vcenter_host, username => $username, password => $password.unwrap(), }
 
-  fail_plan('end')
+  # get the VM information
+  $vm_info = run_task('vmware_tasks::get_vm', $target, $vcenter_params + { vm_name => $vm_name }).first().value
+  if empty($vm_info) {
+    fail_plan("Unable to get vm info for ${vm_name}")
+  }
+  out::verbose($vm_info)
+  $hostname = $vm_info['host_name']
+  if empty($hostname) {
+    fail_plan("Unable to get hostname for ${vm_name}. The hostname should be set and equal to the certname in PE.")
+  }
 
-  $target_facts = run_plan('facts', $target).first()
-  $target_disks = $target_facts.value['disks']
-  out::message($target_disks)
+  # get VM's current disk layout
+  out::message(run_command('df -h', $hostname))
 
-  $uuid = String('6000c29b437a89c547a4f7cad9ca61d2')
-  # $disk = $target_disks.each | $name, $props | {
+  # add a new disk with required capacity
+  $hard_disk = run_task('vmware_tasks::add_disk', $target, $vcenter_params + { vm_name => $vm_name, size => $size_gb }).first().value
+  if empty($hard_disk) {
+    fail_plan("Unable to add disk to vm ${vm_name} of size ${size_gb}GB")
+  }
+  out::verbose($hard_disk)
+  $hd_name = $hard_disk['name']
+
+  # lowercase the UUID and remove dashes to become Linux-compatible
+  $uuid = regsubst($hard_disk['uuid'], '-', '', 'G').downcase()
+  out::verbose($uuid)
+
+  # Get disk facts on the VM
+  # Assumption here is that the hostname is the same as the certname
+  $target_facts = run_plan('facts', $hostname).first().value
+  $target_disks = $target_facts['disks']
+  out::verbose($target_disks)
+
+  # search for the disk with our UUID, that parameter is called `serial` in the fact
   $found = $target_disks.filter | $disk | {
-    out::message($disk)
     $disk[1]['serial'] == $uuid
   }
-  out::message("found: ${found}, keys: ${found.keys()}")
   if $found.length() != 1 {
     fail_plan("Could not find disk wuth uuid ${uuid}, exiting")
   }
   $disk = $found.keys()[0]
-  out::message("found disk: ${disk}")
-
   $disk_size = $found[$disk]['size_bytes']
-  out::message("disk size: ${disk_size}")
+  out::message("found disk: ${disk}, size: ${disk_size}")
 
-  $requested_size = lvm::size_to_bytes($size)
-  out::message("requested_size: ${requested_size}")
+  # use lvm to add the disk and optionally resize the filesystem
+  out::message("Adding disk to ${hostname}...")
 
-  $available_size = $disk_size * $avail_percentage
-  out::verbose("available_size: ${available_size}")
+  run_plan('lvm::expand',
+  {
+    additional_size => "${size_gb}gb",
+    disks => ["/dev/${disk}"],
+    logical_volume => $logical_volume,
+    resize_fs => $resize_fs,
+    server => $hostname,
+    volume_group => $volume_group,
+  })
 
+  # get VM's current disk layout
+  out::message(run_command('df -h', $hostname))
 
-  run_plan('lvm::expand', )
+  out::message("Adding disk ${disk} of size ${size_gb} to ${vm_name} (${hostname} successful!")
 }
