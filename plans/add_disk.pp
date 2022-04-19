@@ -3,13 +3,11 @@ plan vmware_tasks::add_disk (
   String[1] $username,
   Sensitive $password,
   String[1] $vm_name,
-  String[1] $size_gb,
+  Pattern[/^[0-9]+$/,/^[0-9]+\.[0-9]+$/] $size_gb,
   String[1] $logical_volume = 'root',
   String[1] $volume_group = 'cl',
-  Boolean $resize_fs = true,
+  Enum['yes','no'] $resize_fs = 'yes',
   TargetSpec $target,
-  Optional[Float[0,1]] $avail_percentage = 0.99,
-  Boolean $dry_run = true,
 ) {
 
   $vcenter_params = { server => $vcenter_host, username => $username, password => $password.unwrap(), }
@@ -65,7 +63,7 @@ plan vmware_tasks::add_disk (
     additional_size => "${size_gb}gb",
     disks => ["/dev/${disk}"],
     logical_volume => $logical_volume,
-    resize_fs => $resize_fs,
+    resize_fs => $resize_fs == 'yes',
     server => $hostname,
     volume_group => $volume_group,
   })
@@ -73,5 +71,5 @@ plan vmware_tasks::add_disk (
   # get VM's current disk layout
   out::message(run_command('df -h', $hostname))
 
-  out::message("Adding disk ${disk} of size ${size_gb} to ${vm_name} (${hostname} successful!")
+  out::message("Adding disk ${disk} of size ${size_gb}GB to ${vm_name} (${hostname} successful!")
 }
