@@ -1,1 +1,0 @@
-{"username":"dimitri.tischenko","password":"oeajjiufUk6URndiXvVQBsaE","server":"vcenter-prod1.ops.puppetlabs.net","vm_name":"linux1","size":1,"_task":"vmware_tasks::add_disk"}
