@@ -3,7 +3,7 @@ plan vmware_tasks::add_disk (
   String[1] $username,
   Sensitive $password,
   String[1] $vm_name,
-  Pattern[/^[0-9]+$/,/^[0-9]+\.[0-9]+$/] $size_gb,
+  Pattern[/^[0-9]+$/,/^[0-9]+\.[0-9]+$/,/full/] $size_gb, # allow decimal point format or the string "full"
   String[1] $logical_volume = 'root',
   String[1] $volume_group = 'cl',
   Enum['yes','no'] $resize_fs = 'yes',
@@ -58,9 +58,13 @@ plan vmware_tasks::add_disk (
   # use lvm to add the disk and optionally resize the filesystem
   out::message("Adding disk to ${hostname}...")
 
+  $additional_size = $size_gb ? {
+    'full'  => undef,
+    default => "${size_gb}GB",
+  }
   run_plan('lvm::expand',
   {
-    additional_size => "${disk_size}B",
+    additional_size => $additional_size,
     disks => ["/dev/${disk}"],
     logical_volume => $logical_volume,
     resize_fs => $resize_fs == 'yes',
