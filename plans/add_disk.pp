@@ -60,7 +60,7 @@ plan vmware_tasks::add_disk (
 
   run_plan('lvm::expand',
   {
-    additional_size => $disk_size,
+    additional_size => String($disk_size),
     disks => ["/dev/${disk}"],
     logical_volume => $logical_volume,
     resize_fs => $resize_fs == 'yes',
