@@ -6,6 +6,6 @@ moduledir '.modules'
 
 mod 'lvm',
   git: 'https://github.com/timidri/puppetlabs-lvm',
-  ref: '7cd5d4e6d9c1f364b711a7648a875a9f90efc80c'
+  ref: '99af60c14f624be472cf8dc4d491aab19d3ad3e7'
 mod 'puppetlabs/stdlib', '6.6.0'
 mod 'puppetlabs/mount_core', '1.1.0'

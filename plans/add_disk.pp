@@ -3,7 +3,7 @@ plan vmware_tasks::add_disk (
   String[1] $username,
   Sensitive $password,
   String[1] $vm_name,
-  Pattern[/^[0-9]+$/,/^[0-9]+\.[0-9]+$/,/full/] $size_gb, # allow decimal point format or the string "full"
+  Pattern[/^[0-9]+$/,/^[0-9]+\.[0-9]+$/] $size_gb,
   String[1] $logical_volume = 'root',
   String[1] $volume_group = 'cl',
   Enum['yes','no'] $resize_fs = 'yes',
@@ -58,13 +58,13 @@ plan vmware_tasks::add_disk (
   # use lvm to add the disk and optionally resize the filesystem
   out::message("Adding disk to ${hostname}...")
 
-  $additional_size = $size_gb ? {
-    'full'  => undef,
-    default => "${size_gb}GB",
-  }
-  run_plan('lvm::expand',
+  # if we try to expand the lv with exact disk size, sometimes there is not enough space
+  # TODO: we should make it possible for lvm to use all remaning space ('100%') but the lvm plan doesn't support this currently 
+  $additional_size = Float($size_gb) * 0.999
+
+  $expand_results = run_plan('lvm::expand',
   {
-    additional_size => '100%',
+    additional_size => "${additional_size}GB",
     disks => ["/dev/${disk}"],
     logical_volume => $logical_volume,
     resize_fs => $resize_fs == 'yes',
@@ -72,8 +72,10 @@ plan vmware_tasks::add_disk (
     volume_group => $volume_group,
   })
 
-  # get VM's current disk layout
+  # get VM's new disk layout
   out::message(run_command('df -h', $hostname))
 
   out::message("Adding disk ${disk} of size ${size_gb}GB to ${vm_name} (${hostname}) successful!")
+
+  return $expand_results
 }
