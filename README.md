@@ -26,7 +26,7 @@ This module contains tasks for a PoC showing Relay+PE capabilities in managing V
     systemctl restart pxp-agent
     ```
 
-1. Install this module
+1. Install this module. If you don't use Code Manager, make sure to install it into `/opt/puppetlabs/puppet/modules` so PE will see the plans inside it.
 1. Check that you can see the tasks inside the module
 
     ```bash
@@ -34,6 +34,14 @@ This module contains tasks for a PoC showing Relay+PE capabilities in managing V
     ```
 
   You should see the tasks in this module listed.
+
+1. Check that you can see the plans inside the module
+
+    ```bash
+    puppet plan show|grep vmware
+    ```
+
+  You should see the plans in this module listed.
 
 1. Run a test task
 
@@ -50,6 +58,7 @@ This module contains tasks for a PoC showing Relay+PE capabilities in managing V
     puppet agent -t
     ```
 
+1. Run `puppet agent -t` to install lvm module's types and providers
 1. Check whether you can see the module's plan and facts:
 
     ```bash
