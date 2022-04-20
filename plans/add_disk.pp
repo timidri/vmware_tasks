@@ -60,7 +60,7 @@ plan vmware_tasks::add_disk (
 
   run_plan('lvm::expand',
   {
-    additional_size => "${size_gb}gb",
+    additional_size => $disk_size,
     disks => ["/dev/${disk}"],
     logical_volume => $logical_volume,
     resize_fs => $resize_fs == 'yes',
@@ -71,5 +71,5 @@ plan vmware_tasks::add_disk (
   # get VM's current disk layout
   out::message(run_command('df -h', $hostname))
 
-  out::message("Adding disk ${disk} of size ${size_gb}GB to ${vm_name} (${hostname} successful!")
+  out::message("Adding disk ${disk} of size ${size_gb}GB to ${vm_name} (${hostname}) successful!")
 }

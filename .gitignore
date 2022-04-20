@@ -4,3 +4,4 @@ bolt-debug.log
 .resource_types
 .plan_cache.json
 .task_cache.json
+params.json
