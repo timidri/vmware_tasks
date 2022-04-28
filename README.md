@@ -68,3 +68,4 @@ This module contains tasks for a PoC showing Relay+PE capabilities in managing V
 
 1. Install the [puppetlabs-relay](https://forge.puppet.com/modules/puppetlabs/relay) module and use it to install and configure the relay agent.
 1. Create a Relay workflow running a task inside vmware_tasks
+
